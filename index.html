@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مسیریاب احسان</title>
+<style>
+body{font-family:Tahoma,sans-serif;background:#eef4f7;color:#183044;padding:16px}
+main{max-width:520px;margin:auto;background:white;padding:20px;border-radius:16px}
+h1{color:#087e8b}
+button{background:#087e8b;color:white;border:0;border-radius:8px;padding:12px;margin:5px;font-size:16px}
+input{width:95%;padding:12px;margin:8px 0;border:1px solid #aaa;border-radius:8px}
+</style>
+</head>
+<body>
+<main>
+<h1>مسیریاب احسان</h1>
+<p>سفر هوشمند، مسیر امن‌تر</p>
+<label>مبدأ</label>
+<input id="start" placeholder="مثلاً تهران">
+<label>مقصد</label>
+<input id="end" placeholder="مثلاً آمل">
+<button onclick="route()">نمایش مسیر</button>
+<button onclick="locate()">موقعیت من</button>
+<p id="status">مبدأ و مقصد را وارد کنید.</p>
+</main>
+<script>
+function route(){
+let a=document.getElementById('start').value.trim();
+let b=document.getElementById('end').value.trim();
+if(!a||!b){document.getElementById('status').textContent='لطفاً مبدأ و مقصد را وارد کنید.';return;}
+location.href='https://www.google.com/maps/dir/'+encodeURIComponent(a)+'/'+encodeURIComponent(b);
+}
+function locate(){
+if(!navigator.geolocation){alert('موقعیت‌یابی در دسترس نیست.');return;}
+navigator.geolocation.getCurrentPosition(p=>{
+document.getElementById('start').value=p.coords.latitude+','+p.coords.longitude;
+},()=>alert('دسترسی موقعیت را بررسی کنید.'));
+}
+</script>
+</body>
+</html>
