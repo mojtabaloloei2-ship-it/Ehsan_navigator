@@ -239,11 +239,11 @@ async function findPlace(query) {
     "&limit=1&lang=fa";
 
   const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error("جست‌وجوی مکان با مشکل روبه‌رو شد.");
-  }
-
+if (!response.ok) {
+throw new Error(
+"خطای سرویس جست‌وجوی مکان: " + response.status
+);
+}
   const data = await response.json();
 
   if (!data.features || data.features.length === 0) {
@@ -438,4 +438,4 @@ function clearRoute() {
 }
 </script>
 </body>
-</html >
+</html>
