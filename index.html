@@ -226,29 +226,53 @@ function parseCoordinates(text) {
   return [lat, lon];
 }
 
+
 async function findPlace(query) {
   const coordinates = parseCoordinates(query);
+  if (coordinates) return coordinates;
 
-  if (coordinates) {
-    return coordinates;
+  // روش اول: جست‌وجوی Photon
+  try {
+    const url = "https://photon.komoot.io/api/?q=" +
+      encodeURIComponent(query) + "&limit=5&lang=fa";
+
+    const response = await fetch(url);
+
+    if (response.ok) {
+      const data = await response.json();
+
+      if (data.features && data.features.length > 0) {
+        const coords = data.features[0].geometry.coordinates;
+        return [coords[1], coords[0]];
+      }
+    }
+  } catch (error) {
+    console.log("Photon:", error);
   }
 
-  const url =
-    "https://photon.komoot.io/api/?q=" +
-    encodeURIComponent(query) +
-    "&limit=1&lang=fa";
+  // روش دوم: جست‌وجوی جایگزین
+  try {
+    const url = "https://nominatim.openstreetmap.org/search?format=jsonv2&q=" +
+      encodeURIComponent(query) + "&limit=1&accept-language=fa";
 
-  const response = await fetch(url);
-if (!response.ok) {
-throw new Error(
-"خطای سرویس جست‌وجوی مکان: " + response.status
-);
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error("خطای سرویس جست‌وجوی مقصد");
+    }
+
+    const data = await response.json();
+
+    if (data.length > 0) {
+      return [Number(data[0].lat), Number(data[0].lon)];
+    }
+  } catch (error) {
+    console.log("Nominatim:", error);
+  }
+
+  throw new Error("مقصد پیدا نشد. نام شهر یا مقصد را دقیق‌تر وارد کنید.");
 }
-  const data = await response.json();
 
-  if (!data.features || data.features.length === 0) {
-    throw new Error("این مکان پیدا نشد. نام شهر یا مقصد را دقیق‌تر بنویسید.");
-  }
 
   const coordinatesFound = data.features[0].geometry.coordinates;
 
